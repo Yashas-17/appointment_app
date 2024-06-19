@@ -1,0 +1,139 @@
+Appointments----
+import {Component} from 'react'
+import {v4 as uuidv4} from 'uuid'
+import AppointmentItem from '../AppointmentItem'
+import './index.css'
+
+const AppointmentsDetailsList = [
+  {
+    id: uuidv4(),
+    name: 'dentist',
+    date: new Date(),
+    isStarred: false,
+  },
+  {
+    id: uuidv4(),
+    name: 'lawyer',
+    date: new Date(),
+    isStarred: false,
+  },
+]
+
+class Appointments extends Component {
+  state = {AppointmentsList: AppointmentsDetailsList, title: '', date: ''}
+
+  onChangeTitle = event => {
+    this.setState({title: event.target.value})
+  }
+
+  onChangeDate = event => {
+    this.setState({date: event.target.value})
+  }
+
+  onSubmitForm = event => {
+    event.preventDefault()
+    const {title, date} = this.state
+    const newAppointment = {
+      id: uuidv4(),
+      name: title,
+      date: new Date(date).toLocaleDateString(), // Format the date for display
+      isStarred: false,
+    }
+
+    this.setState(prevState => ({
+      AppointmentsList: [...prevState.AppointmentsList, newAppointment],
+      title: '',
+      date: '',
+    }))
+  }
+
+  render() {
+    const {AppointmentsList, title, date} = this.state
+
+    return (
+      <div className="bg-container">
+        <div className="appointment-card-container">
+          <div className="static-container">
+            <div className="left-data-container">
+              <h1>Add Appointment</h1>
+              <form onSubmit={this.onSubmitForm}>
+                <label htmlFor="app-type">TITLE</label>
+                <br />
+                <input
+                  type="text"
+                  id="app-type"
+                  value={title}
+                  onChange={this.onChangeTitle}
+                />
+                <br />
+                <br />
+                <label htmlFor="app-date">DATE</label>
+                <br />
+                <input
+                  type="date"
+                  id="app-date"
+                  value={date}
+                  onChange={this.onChangeDate}
+                />
+                <br />
+                <br />
+                <button type="submit" className="btn">
+                  ADD
+                </button>
+              </form>
+            </div>
+            <div className="right-img-container">
+              <img
+                src="https://assets.ccbp.in/frontend/react-js/appointments-app/appointments-img.png"
+                className="design-img"
+                alt="appointments"
+              />
+            </div>
+          </div>
+          <hr />
+          <ul className="unordered-list">
+            {AppointmentsList.map(each => (
+              <AppointmentItem key={each.id} details={each} />
+            ))}
+          </ul>
+        </div>
+      </div>
+    )
+  }
+}
+
+export default Appointments
+
+
+
+-----------AppointmentItem---------------------
+import './index.css'
+
+const AppointmentItem = props => {
+  const {details} = props
+  const {name, date, isStarred} = details
+  const isStarredImage = isStarred
+    ? 'https://assets.ccbp.in/frontend/react-js/appointments-app/filled-star-img.png'
+    : 'https://assets.ccbp.in/frontend/react-js/appointments-app/star-img.png'
+  return (
+    <li className="li-container">
+      <div className="cont">
+        <div className="data-container">
+          <p>{name}</p>
+          <p>{date}</p>
+        </div>
+        <button
+          type="button"
+          aria-label={isStarred ? 'Unstar appointment' : 'Star appointment'}
+        >
+          <img src={isStarredImage} alt="star" className="star-img" />
+          <span className="visually-hidden">
+            {isStarred ? 'Unstar appointment' : 'Star appointment'}
+          </span>
+        </button>
+      </div>
+    </li>
+  )
+}
+
+export default AppointmentItem
